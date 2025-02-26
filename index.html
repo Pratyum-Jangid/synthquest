@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Health Chatbot</title>
+  <style>
+    :root {
+      --primary: #4285F4;
+      --primary-dark: #3367D6; 
+      --secondary: #34A853;
+      --accent: #EA4335;
+      --light: #F8F9FA;
+      --dark: #202124;
+      --gray: #5F6368;
+      --gray-light: #DADCE0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: var(--dark);
+      padding: 12px 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .logo svg {
+      fill: var(--primary);
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover, 
+    nav a:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+/* Fixed Dropdown Menu Styles */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-button:hover,
+.dropdown-button:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;         /* Ensures the dropdown appears below the button */
+  margin-top: 5px;   /* Small gap between button and dropdown */
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1001;     /* Higher z-index to ensure it appears above other elements */
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 12px 16px;
+  color: var(--dark);
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a:focus {
+  background-color: var(--gray-light);
+}
+
+.dropdown.active .dropdown-content {
+  display: block;
+}
+
+    .mobile-menu-button {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      margin-top: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: white;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-button:hover,
+    .cta-button:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 0;
+      background-color: white;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      color: var(--dark);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: white;
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+
+    .feature-card p {
+      color: var(--gray);
+    }
+
+    /* Chat Section */
+    .chat-section {
+      background-color: var(--light);
+      padding: 80px 0;
+    }
+
+    .chat-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-header h2 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .chat-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--secondary);
+    }
+
+    .chat-box {
+      height: 400px;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background-color: #f5f8ff;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 15px;
+      border-radius: 18px;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: white;
+      color: var(--dark);
+      border-radius: 18px 18px 18px 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 15px;
+      background-color: white;
+      border-radius: 18px;
+      align-self: flex-start;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      width: fit-content;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background-color: var(--gray-light);
+      border-radius: 50%;
+      display: inline-block;
+      animation: typing 1.4s infinite both;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    .chat-input-container {
+      display: flex;
+      border-top: 1px solid var(--gray-light);
+      padding: 15px;
+      background-color: white;
+    }
+
+    .chat-input-form {
+      display: flex;
+      width: 100%;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid var(--gray-light);
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary);
+    }
+
+    .send-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      margin-left: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .send-button:hover,
+    .send-button:focus {
+      background-color: var(--primary-dark);
+    }
+
+    .send-button:disabled {
+      background-color: var(--gray-light);
+      cursor: not-allowed;
+    }
+
+    .send-button svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 40px 0 20px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .footer-column h3 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: var(--gray-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover,
+    .footer-links a:focus {
+      color: white;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--gray-light);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--dark);
+        flex-direction: column;
+        padding: 10px 0;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-button {
+        display: block;
+      }
+
+      .dropdown-content {
+        position: static;
+        box-shadow: none;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .dropdown-content a {
+        color: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <svg viewBox="0 0 24 24">
+          <path d="M21,12.22C21,6.73 16.74,3 12,3c-4.69,0-9,3.65-9,9.28C3,16.33 5.02,19.5 8.17,20.66c0.93,0.34 1.04,0.81 0.97,1.25c-0.07,0.4-0.45,1.13-0.45,1.13c-0.03,0.09-0.06,0.19-0.06,0.28c0,0.39,0.32,0.72,0.72,0.72h5.14c0.39,0,0.72-0.32,0.72-0.72c0-0.1-0.02-0.19-0.06-0.28c0,0-0.38-0.73-0.45-1.13c-0.07-0.44,0.04-0.91,0.97-1.25c3.15-1.16,5.17-4.33,5.17-8.38c0-0.01,0-0.01,0-0.02c-0.01-0.05-0.02-0.1-0.02-0.15"/>
+        </svg>
+        AI Health Assistant
+      </a>
+      
+      <button class="mobile-menu-button" aria-expanded="false" aria-controls="nav-links">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/>
+        </svg>
+      </button>
+      
+      <div class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="medicine.html">Medicine</a>
+        <div class="dropdown">
+          <button class="dropdown-button" aria-expanded="false" aria-haspopup="true">
+            Health Acts
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
+            </svg>
+          </button>
+          <div class="dropdown-content" role="menu">
+            <a href="indian_acts.html" role="menuitem">Indian Acts</a>
+            <a href="who_acts.html" role="menuitem">WHO Acts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Your Personal AI Health Assistant</h1>
+      <p>Get reliable health information, symptom analysis, and medical guidance through our intelligent chatbot</p>
+      <a href="#chat" class="cta-button">Start Chatting Now</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2>How We Can Help You</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+            </svg>
+          </div>
+          <h3>Health Information</h3>
+          <p>Get accurate information about medical conditions, treatments, and general health advice.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19M10.5,17.5L11.92,16.08L10.34,14.5L11.92,12.92L10.5,11.5L8,14L10.5,16.5M13.5,17.5L16,15L13.5,12.5L12.08,13.92L13.66,15.5L12.08,17.08L13.5,17.5Z" />
+            </svg>
+          </div>
+          <h3>Symptom Analysis</h3>
+          <p>Describe your symptoms and get potential causes and guidance on what to do next.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M10,17L5,12L6.41,10.59L10,14.17L17.59,6.58L19,8L10,17Z" />
+            </svg>
+          </div>
+          <h3>Medical Guidelines</h3>
+          <p>Access information about health standards, protocols, and regulations from WHO and local authorities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat Section -->
+  <section class="chat-section" id="chat">
+    <div class="container">
+      <div class="chat-container">
+        <div class="chat-header">
+          <h2>AI Health Assistant</h2>
+          <div class="chat-status">
+            <div class="status-indicator"></div>
+            <span>Online</span>
+          </div>
+        </div>
+        <div class="chat-box" id="chat-box">
+          <div class="message bot">
+            Hello! I'm your AI Health Assistant. How can I help you today? You can ask me about symptoms, medications, or general health advice.
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <form class="chat-input-form" id="chat-form">
+            <input type="text" id="user-input" class="chat-input" placeholder="Type your health question here..." aria-label="Your message">
+            <button type="submit" class="send-button" id="send-button" aria-label="Send message">
+              <svg viewBox="0 0 24 24">
+                <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>AI Health Assistant</h3>
+          <p>Your trusted health companion powered by advanced AI technology.</p>
+        </div>
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="medicine.html">Medicine</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Health Resources</h3>
+          <ul class="footer-links">
+            <li><a href="indian_acts.html">Indian Health Acts</a></li>
+            <li><a href="who_acts.html">WHO Guidelines</a></li>
+            <li><a href="blog.html">Health Blog</a></li>
+            <li><a href="faq.html">FAQs</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Legal</h3>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="disclaimer.html">Medical Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 AI Health Assistant. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle mobile menu
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const navLinks = document.getElementById('nav-links');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      mobileMenuButton.setAttribute('aria-expanded', !expanded);
+      navLinks.classList.toggle('active');
+    });
+    
+    // Toggle dropdowns
+    const dropdownButtons = document.querySelectorAll('.dropdown-button');
+    
+    dropdownButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dropdown = button.closest('.dropdown');
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        
+        // Close all other dropdowns
+        dropdownButtons.forEach(otherButton => {
+          if (otherButton !== button) {
+            otherButton.setAttribute('aria-expanded', 'false');
+            otherButton.closest('.dropdown').classList.remove('active');
+          }
+        });
+        
+        // Toggle current dropdown
+        button.setAttribute('aria-expanded', !expanded);
+        dropdown.classList.toggle('active');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown')) {
+        dropdownButtons.forEach(button => {
+          button.setAttribute('aria-expanded', 'false');
+          button.closest('.dropdown').classList.remove('active');
+        });
+      }
+    });
+    
+    // Chat functionality
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+    const sendButton = document.getElementById('send-button');
+    
+    // API endpoint
+    const API_ENDPOINT = 'http://127.0.0.1:5000/chat';    
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const message = userInput.value.trim();
+      if (!message) return;
+      
+      // Disable input and button while sending
+      userInput.disabled = true;
+      sendButton.disabled = true;
+      
+      // Add user message to chat
+      appendMessage('user', message);
+      userInput.value = '';
+      
+      // Show typing indicator
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'typing-indicator';
+      typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+      chatBox.appendChild(typingIndicator);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        typingIndicator.remove();
+        
+        // Add bot response to chat
+        appendMessage('bot', data);
+      } catch (error) {
+        console.error('Error:', error);
+        
+        // Remove typing indicator
+        typingIndicator.remove();
+        
+        // Show error message
+        appendMessage('bot', { response: "Sorry, I couldn't connect to the server. Please try again later." });
+      } finally {
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+      }
+    });
+    
+    function appendMessage(type, content) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      
+      if (type === 'user') {
+        messageDiv.textContent = `You: ${content}`;
+      } else {
+        if (content["Possible Condition"]) {
+          messageDiv.innerHTML = `
+            <strong>Possible Condition:</strong> ${content["Possible Condition"]} <br>
+            <strong>Recommended Medicine:</strong> ${content["Recommended Medicine"]} <br>
+            <strong>Precaution:</strong> ${content["Precaution"]}
+          `;
+        } else {
+          messageDiv.textContent = content.response || "I'm sorry, I couldn't process your request.";
+        }
+      }
+      
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    // Focus input on page load
+    window.addEventListener('load', () => {
+      userInput.focus();
+    });
+    
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script></body>
+</html>
