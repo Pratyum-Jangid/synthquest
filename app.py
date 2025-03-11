@@ -19,23 +19,33 @@ except FileNotFoundError:
 
 # General responses for non-medical questions
 general_responses = {
-    "who trained you": "I was built by Pratyum Jangid for the SynthQuest Hackathon!",
+    "who trained you": "I was built by Pratyum Jangid for the SynthQuest!",
     "what do you do": "I help users with medical guidance and medicine information!",
     "tell me a joke": "Why did the doctor carry a red pen? In case they needed to draw blood!",
     "how are you": "I'm just a chatbot, but I'm here to help you!",
     "who created you": "I was created by Pratyum Jangid!",
     "what is your name": "I'm your AI healthcare assistant!",
     "what is your purpose": "I assist users with medical advice, symptom checking, and medicine information.",
-    "how can you help me": "I can provide information on symptoms, diseases, and medicine recommendations."
+    "how can you help me": "I can provide information on symptoms, diseases, and medicine recommendations.",
+    "i feel dizzy": "Dizziness can be caused by dehydration, low blood pressure, or an ear infection. Try drinking water and resting. If it persists, consult a doctor.",
+    "i have a headache": "A headache can result from stress, dehydration, or migraines. Drink water and rest. If severe, consider taking a mild pain reliever.",
+    "i have stomach pain": "Stomach pain can be caused by indigestion, gas, or food poisoning. Try drinking warm water and avoiding heavy meals.",
+    "my joints hurt": "Joint pain may be due to arthritis, strain, or lack of movement. Applying heat and mild stretching may help.",
+    "i have a fever": "A fever is usually a sign of infection. Stay hydrated and rest. If it exceeds 102°F, consult a doctor.",
+    "my throat hurts": "A sore throat can be caused by an infection or allergies. Try warm tea with honey and rest.",
+    "i feel nauseous": "Nausea can be caused by food poisoning, motion sickness, or stress. Sip ginger tea and rest.",
+    "i feel weak": "Weakness can result from low blood sugar, dehydration, or illness. Eat a balanced meal and rest.",
+    "i have a cold": "A cold is caused by a viral infection. Stay warm, hydrated, and rest.",
 }
 
+# Function to process user input
 # Function to process user input
 def get_response(user_input):
     user_input = user_input.lower().strip()
 
-    # Check for general questions first
+    # Check for general medical questions using keyword matching
     for key in general_responses:
-        if key in user_input:
+        if key in user_input or any(word in user_input for word in key.split()):  # Flexible matching
             return {"response": general_responses[key]}
 
     # Check for direct disease name queries
@@ -89,7 +99,7 @@ def medicine_info():
                     "Medicine": row["Medicine"],
                     "Usage": row.get("Usage", "Not available"),
                     "Precautions": row.get("Precaution", "Not available"),
-                    "Side Effects": row.get("Side Effects", "Not available")
+                    "Side Effects": row.get("Side Effects", "Not available"),
                 })
 
         return jsonify({"response": "Sorry, no information found for this medicine."})
@@ -97,7 +107,7 @@ def medicine_info():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Homepage route (for testing)
+# Homepage route
 @app.route("/", methods=["GET"])
 def home():
     return "Chatbot API is running!"
